@@ -1,0 +1,8 @@
+fastapi[standard]==0.135.3
+pydantic-settings==2.11.0
+pydantic[email]==2.11.5
+pytest==8.4.2
+httpx==0.28.1
+psycopg2-binary==2.9.10
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
