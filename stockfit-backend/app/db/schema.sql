@@ -42,6 +42,7 @@ CREATE TABLE questions (
     question_string TEXT NOT NULL,
     question_type VARCHAR(50) NOT NULL, 
     question_id_cfa VARCHAR(50) NOT NULL,
+    question_category VARCHAR(50) NOT NULL,
     question_options JSONB NOT NULL, 
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -60,6 +61,7 @@ CREATE TABLE question_responses (
     fk_question_id UUID NOT NULL REFERENCES questions(question_id) ON DELETE CASCADE,
     
     question_response TEXT NOT NULL,
+    score_received INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (fk_questionnaire_id, fk_question_id)
 );

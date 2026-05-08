@@ -32,7 +32,6 @@ def get_questions(db: psycopg2.extensions.connection) -> list[QuestionSchema]:
                 QuestionOptionSchema(
                     label=opt.get("label"),
                     value=opt.get("value"),
-                    weight=opt.get("weight"),
                 )
                 for opt in row["question_options"]
             ],
@@ -55,7 +54,7 @@ def _valid_responses(options: list[dict]) -> set[str]:
     valid: set[str] = set()
     for opt in options:
         value = opt.get("value")
-        text = opt.get("label")
+        text = opt.get("text")
         if value is not None:
             valid.add(str(value))
         if text:
