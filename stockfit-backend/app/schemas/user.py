@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
@@ -10,7 +9,6 @@ class SignupRequest(BaseModel):
     password: str
     first_name: str | None = None
     last_name: str | None = None
-    risk_tolerance: Literal["High", "Moderate", "Low"] = "Moderate"
 
 
 class LoginRequest(BaseModel):
@@ -21,6 +19,7 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    user: "UserResponse"
 
 
 class UserResponse(BaseModel):
@@ -28,5 +27,4 @@ class UserResponse(BaseModel):
     email: str
     first_name: str | None
     last_name: str | None
-    risk_tolerance: str
     created_at: datetime

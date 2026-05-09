@@ -6,7 +6,7 @@ from jose import jwt
 import bcrypt
 
 from app.core.config import get_settings
-from app.schemas.user import LoginRequest, SignupRequest, TokenResponse
+from app.schemas.user import LoginRequest, SignupRequest, TokenResponse, UserResponse
 
 
 def _hash_password(password: str) -> str:
@@ -48,22 +48,35 @@ def signup(db: psycopg2.extensions.connection, data: SignupRequest) -> TokenResp
         password_hash = _hash_password(data.password)
         cur.execute(
             """
-            INSERT INTO users (email, password_hash, first_name, last_name, risk_tolerance)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING user_id
+            INSERT INTO users (email, password_hash, first_name, last_name)
+            VALUES (%s, %s, %s, %s)
+            RETURNING user_id, email, first_name, last_name, created_at
             """,
-            (data.email, password_hash, data.first_name, data.last_name, data.risk_tolerance),
+            (data.email, password_hash, data.first_name, data.last_name),
         )
         row = cur.fetchone()
 
     token = _create_access_token(str(row["user_id"]))
-    return TokenResponse(access_token=token)
+    return TokenResponse(
+        access_token=token,
+        user=UserResponse(
+            user_id=row["user_id"],
+            email=row["email"],
+            first_name=row["first_name"],
+            last_name=row["last_name"],
+            created_at=row["created_at"],
+        ),
+    )
 
 
 def login(db: psycopg2.extensions.connection, data: LoginRequest) -> TokenResponse:
     with db.cursor() as cur:
         cur.execute(
-            "SELECT user_id, password_hash FROM users WHERE email = %s", (data.email,)
+            """
+            SELECT user_id, email, first_name, last_name, created_at, password_hash
+            FROM users WHERE email = %s
+            """,
+            (data.email,),
         )
         row = cur.fetchone()
 
@@ -75,4 +88,13 @@ def login(db: psycopg2.extensions.connection, data: LoginRequest) -> TokenRespon
         )
 
     token = _create_access_token(str(row["user_id"]))
-    return TokenResponse(access_token=token)
+    return TokenResponse(
+        access_token=token,
+        user=UserResponse(
+            user_id=row["user_id"],
+            email=row["email"],
+            first_name=row["first_name"],
+            last_name=row["last_name"],
+            created_at=row["created_at"],
+        ),
+    )
