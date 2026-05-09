@@ -6,3 +6,5 @@ httpx==0.28.1
 psycopg2-binary==2.9.10
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
+numpy==2.4.3
+numpy-financial==1.0.0

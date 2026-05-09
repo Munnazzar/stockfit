@@ -9,6 +9,9 @@ from app.schemas.assessment import (
     RiskAssessmentRequest,
     RiskAssessmentResponse,
 )
+from app.services.RiskTierCalculation.risk_profile_calculator import evaluate_user_risk_profile
+
+_TIER_TO_DB = {"HIGH": "High", "MODERATE": "Moderate", "LOW": "Low"}
 
 
 def get_questions(db: psycopg2.extensions.connection) -> list[QuestionSchema]:
@@ -114,8 +117,48 @@ def submit_risk_assessment(
                 ),
             )
 
-    # TODO: implement proper scoring algorithm
-    assessed_risk = "Moderate"
+    opts = {r.question_id_cfa: r.selected_option for r in data.responses}
+
+    def _num(key: str) -> float:
+        return float(opts[key].value)
+
+    def _score(key: str) -> int:
+        return int(opts[key].weight)
+
+    def _bool(key: str) -> bool:
+        opt = opts[key]
+        if opt.weight is not None:
+            return bool(opt.weight)
+        return opt.value.strip().lower() == "yes"
+
+    profile = evaluate_user_risk_profile(
+        target_future_value=_num("target_future_value"),
+        current_portfolio_value=_num("current_portfolio_value"),
+        investment_time_horizon_years=int(_num("investment_time_horizon_years")),
+        annual_net_cash_flow=_num("annual_net_cash_flow"),
+        tolerance_time_horizon_years=int(_num("investment_time_horizon_years")),
+        expects_high_withdrawal_rate=_bool("expects_high_withdrawal_rate"),
+        has_stable_external_income=_bool("has_stable_external_income"),
+        willingness_to_take_risk=_score("willingness_to_take_risk"),
+        safety_vs_return_preference=_score("safety_vs_return_preference"),
+        financial_knowledge_level=_score("financial_knowledge_level"),
+        investment_experience_level=_score("investment_experience_level"),
+        market_risk_perception=_score("market_risk_perception"),
+        reaction_to_losses_score=_score("reaction_to_losses_score"),
+    )
+
+    if profile["portfolio_tier"] is None:
+        return RiskAssessmentResponse(
+            portfolio_tier=None,
+            signal=profile["signal"],
+            message=profile["message"],
+            risk_need_tier=profile["risk_need_tier"],
+            risk_capacity_tier=profile["risk_capacity_tier"],
+            behavioral_risk_tier=profile["behavioral_risk_tier"],
+            required_rate_of_return=profile["required_rate_of_return"],
+        )
+
+    assessed_risk = _TIER_TO_DB[profile["portfolio_tier"]]
 
     with db.cursor() as cur:
         cur.execute(
@@ -155,4 +198,11 @@ def submit_risk_assessment(
     return RiskAssessmentResponse(
         questionnaire_id=questionnaire_id,
         assessed_risk=assessed_risk,
+        portfolio_tier=profile["portfolio_tier"],
+        signal=profile["signal"],
+        message=profile["message"],
+        risk_need_tier=profile["risk_need_tier"],
+        risk_capacity_tier=profile["risk_capacity_tier"],
+        behavioral_risk_tier=profile["behavioral_risk_tier"],
+        required_rate_of_return=profile["required_rate_of_return"],
     )

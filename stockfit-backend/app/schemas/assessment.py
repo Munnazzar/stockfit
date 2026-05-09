@@ -52,5 +52,12 @@ class RiskAssessmentRequest(BaseModel):
 
 
 class RiskAssessmentResponse(BaseModel):
-    questionnaire_id: UUID
-    assessed_risk: str
+    questionnaire_id: UUID | None = None
+    assessed_risk: str | None = None
+    portfolio_tier: str | None = None
+    signal: str
+    message: str
+    risk_need_tier: str
+    risk_capacity_tier: str
+    behavioral_risk_tier: str
+    required_rate_of_return: float
