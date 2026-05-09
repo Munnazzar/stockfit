@@ -20,9 +20,18 @@ class QuestionSchema(BaseModel):
     created_at: datetime
 
 
+class SelectedOptionSchema(BaseModel):
+    label: str | None = None
+    value: str | None = None
+    weight: float | None = None
+
+
 class QuestionAnswerRequest(BaseModel):
     question_id: UUID
-    question_response: Annotated[str, Field(min_length=1)]
+    question_string: str
+    question_type: str
+    question_id_cfa: str
+    selected_option: SelectedOptionSchema
 
 
 class RiskAssessmentRequest(BaseModel):
@@ -37,7 +46,7 @@ class RiskAssessmentRequest(BaseModel):
         for item in v:
             qid = str(item.question_id)
             if qid in seen:
-                raise ValueError(f"Duplicate response for question_id {qid}.")
+                raise ValueError(f"Duplicate response for question_id '{qid}'.")
             seen.add(qid)
         return v
 

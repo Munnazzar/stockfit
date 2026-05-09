@@ -1,3 +1,4 @@
+import json
 import psycopg2.extensions
 import pprint
 from fastapi import HTTPException, status
@@ -32,6 +33,7 @@ def get_questions(db: psycopg2.extensions.connection) -> list[QuestionSchema]:
                 QuestionOptionSchema(
                     label=opt.get("label"),
                     value=opt.get("value"),
+                    weight = opt.get("weight"),
                 )
                 for opt in row["question_options"]
             ],
@@ -95,17 +97,19 @@ def submit_risk_assessment(
     if extra:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Responses contain {len(extra)} unrecognized question ID(s).",
+            detail=f"Responses contain {len(extra)} unrecognized question_id(s).",
         )
 
     for response in data.responses:
-        qid = str(response.question_id)
-        valid = _valid_responses(db_questions[qid])
-        if response.question_response not in valid:
+        if response.question_type == "number_input":
+            continue
+        valid = _valid_responses(db_questions[str(response.question_id)])
+        value = response.selected_option.value
+        if value not in valid:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail=(
-                    f"'{response.question_response}' is not a valid option for question {qid}. "
+                    f"'{value}' is not a valid option for '{response.question_id_cfa}'. "
                     f"Valid options: {sorted(valid)}"
                 ),
             )
@@ -130,7 +134,11 @@ def submit_risk_assessment(
             VALUES (%s, %s, %s)
             """,
             [
-                (str(questionnaire_id), str(r.question_id), r.question_response)
+                (
+                    str(questionnaire_id),
+                    str(r.question_id),
+                    json.dumps({"value": r.selected_option.value} if r.question_type == "number_input" else r.selected_option.model_dump()),
+                )
                 for r in data.responses
             ],
         )
