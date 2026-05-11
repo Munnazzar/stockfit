@@ -66,6 +66,21 @@ CREATE TABLE question_responses (
     PRIMARY KEY (fk_questionnaire_id, fk_question_id)
 );
 
+CREATE TABLE portfolios (
+    portfolio_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    fk_user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    fk_questionnaire_id UUID NOT NULL REFERENCES questionnaires(questionnaire_id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE portfolio_stock_allocations (
+    allocation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    fk_portfolio_id UUID NOT NULL REFERENCES portfolios(portfolio_id) ON DELETE CASCADE,
+    symbol VARCHAR(15) NOT NULL,
+    allocation_percentage DECIMAL(5, 2) NOT NULL,
+    UNIQUE (fk_portfolio_id, symbol)
+);
+
 CREATE TABLE IF NOT EXISTS garch_volatility_predictions (
     symbol VARCHAR(50),
     date DATE,

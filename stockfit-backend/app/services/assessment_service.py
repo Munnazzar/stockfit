@@ -4,6 +4,7 @@ import pprint
 from fastapi import HTTPException, status
 
 from app.schemas.assessment import (
+    QuestionnaireSchema,
     QuestionOptionSchema,
     QuestionSchema,
     RiskAssessmentRequest,
@@ -12,6 +13,31 @@ from app.schemas.assessment import (
 from app.services.RiskTierCalculation.risk_profile_calculator import evaluate_user_risk_profile
 
 _TIER_TO_DB = {"HIGH": "High", "MODERATE": "Moderate", "LOW": "Low"}
+
+
+def get_user_questionnaires(
+    db: psycopg2.extensions.connection,
+    user_id: str,
+) -> list[QuestionnaireSchema]:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            SELECT questionnaire_id, assessed_risk, created_at
+            FROM questionnaires
+            WHERE fk_user_id = %s
+            ORDER BY created_at DESC
+            """,
+            (user_id,),
+        )
+        rows = cur.fetchall()
+    return [
+        QuestionnaireSchema(
+            questionnaire_id=row["questionnaire_id"],
+            assessed_risk=row["assessed_risk"],
+            created_at=row["created_at"],
+        )
+        for row in rows
+    ]
 
 
 def get_questions(db: psycopg2.extensions.connection) -> list[QuestionSchema]:

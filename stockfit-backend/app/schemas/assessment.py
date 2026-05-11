@@ -51,6 +51,12 @@ class RiskAssessmentRequest(BaseModel):
         return v
 
 
+class QuestionnaireSchema(BaseModel):
+    questionnaire_id: UUID
+    assessed_risk: str | None
+    created_at: datetime
+
+
 class RiskAssessmentResponse(BaseModel):
     questionnaire_id: UUID | None = None
     assessed_risk: str | None = None
