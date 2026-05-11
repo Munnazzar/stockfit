@@ -45,6 +45,7 @@ def create_portfolio(
             detail="Questionnaire not found or does not belong to the current user.",
         )
 
+    #TODO: Rand here, change with genetic
     allocations = _random_allocations([s.upper() for s in data.symbols])
 
     with db.cursor() as cur:
@@ -121,7 +122,7 @@ def get_user_portfolios(
                    k.stock_name
             FROM portfolio_stock_allocations psa
             LEFT JOIN kse30_stocks k ON k.symbol = psa.symbol
-            WHERE psa.fk_portfolio_id = ANY(%s)
+            WHERE psa.fk_portfolio_id = ANY(%s::uuid[])
             """,
             (portfolio_ids,),
         )
