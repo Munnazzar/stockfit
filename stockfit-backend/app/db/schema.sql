@@ -65,3 +65,13 @@ CREATE TABLE question_responses (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (fk_questionnaire_id, fk_question_id)
 );
+
+CREATE TABLE IF NOT EXISTS garch_volatility_predictions (
+    symbol VARCHAR(50),
+    date DATE,
+    expected_volatility_90d DOUBLE PRECISION,
+    expected_volatility_180d DOUBLE PRECISION,
+    rank_90d INTEGER,
+    rank_180d INTEGER,
+    PRIMARY KEY (symbol, date)
+);
