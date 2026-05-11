@@ -4,6 +4,8 @@ import pprint
 from fastapi import HTTPException, status
 
 from app.schemas.assessment import (
+    QuestionnaireDetailSchema,
+    QuestionnaireResponseItemSchema,
     QuestionnaireSchema,
     QuestionOptionSchema,
     QuestionSchema,
@@ -38,6 +40,65 @@ def get_user_questionnaires(
         )
         for row in rows
     ]
+
+
+def get_questionnaire_detail(
+    db: psycopg2.extensions.connection,
+    user_id: str,
+    questionnaire_id: str,
+) -> QuestionnaireDetailSchema:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            SELECT questionnaire_id, assessed_risk, created_at
+            FROM questionnaires
+            WHERE questionnaire_id = %s AND fk_user_id = %s
+            """,
+            (questionnaire_id, user_id),
+        )
+        q_row = cur.fetchone()
+
+        if not q_row:
+            from fastapi import HTTPException, status
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Questionnaire not found or does not belong to the current user.",
+            )
+
+        cur.execute(
+            """
+            SELECT
+                q.question_id,
+                q.question_string,
+                q.question_type,
+                q.question_id_cfa,
+                q.question_category,
+                qr.question_response
+            FROM question_responses qr
+            JOIN questions q ON q.question_id = qr.fk_question_id
+            WHERE qr.fk_questionnaire_id = %s
+            ORDER BY q.question_id_cfa
+            """,
+            (questionnaire_id,),
+        )
+        response_rows = cur.fetchall()
+
+    return QuestionnaireDetailSchema(
+        questionnaire_id=q_row["questionnaire_id"],
+        assessed_risk=q_row["assessed_risk"],
+        created_at=q_row["created_at"],
+        responses=[
+            QuestionnaireResponseItemSchema(
+                question_id=row["question_id"],
+                question_string=row["question_string"],
+                question_type=row["question_type"],
+                question_id_cfa=row["question_id_cfa"],
+                question_category=row["question_category"],
+                selected_option=json.loads(row["question_response"]),
+            )
+            for row in response_rows
+        ],
+    )
 
 
 def get_questions(db: psycopg2.extensions.connection) -> list[QuestionSchema]:

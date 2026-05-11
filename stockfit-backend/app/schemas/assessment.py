@@ -57,6 +57,22 @@ class QuestionnaireSchema(BaseModel):
     created_at: datetime
 
 
+class QuestionnaireResponseItemSchema(BaseModel):
+    question_id: UUID
+    question_string: str
+    question_type: str
+    question_id_cfa: str
+    question_category: str
+    selected_option: dict
+
+
+class QuestionnaireDetailSchema(BaseModel):
+    questionnaire_id: UUID
+    assessed_risk: str | None
+    created_at: datetime
+    responses: list[QuestionnaireResponseItemSchema]
+
+
 class RiskAssessmentResponse(BaseModel):
     questionnaire_id: UUID | None = None
     assessed_risk: str | None = None
