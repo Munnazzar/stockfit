@@ -94,7 +94,7 @@ def get_questionnaire_detail(
                 question_type=row["question_type"],
                 question_id_cfa=row["question_id_cfa"],
                 question_category=row["question_category"],
-                selected_option=json.loads(row["question_response"]),
+                selected_option=row["question_response"],
             )
             for row in response_rows
         ],

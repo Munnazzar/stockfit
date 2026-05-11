@@ -1,0 +1,71 @@
+DATA ACCESS LAYER (DAL)
+=======================
+
+Technology: PostgreSQL accessed via psycopg2 (raw SQL driver with RealDictCursor).
+This project does NOT use an ORM — all queries are hand-written SQL executed through
+a cursor.
+
+Responsibility: The service layer acts as the DAL, providing the API tier with clean
+function calls that abstract all SQL. Each service owns the queries for its domain.
+
+
+CONNECTION MANAGEMENT — app/db/database.py
+------------------------------------------
+get_db() is a FastAPI dependency generator. On each request it opens a psycopg2
+connection, yields it to the service, then commits on success or rolls back on
+exception, and always closes the connection. All row results are returned as
+dictionaries via RealDictCursor.
+
+
+REPOSITORIES (SERVICE FILES)
+-----------------------------
+
+User Repository — app/services/auth_service.py
+  Manages user registration and authentication.
+
+Assessment Repository — app/services/assessment_service.py
+  Manages risk questionnaires, question fetching, response submission, and retrieval.
+
+Portfolio Repository — app/services/portfolio_service.py
+  Manages portfolio creation and retrieval of past portfolio allocations per user.
+
+Stock Repository — app/services/stock_service.py
+  Manages OHLCV stock data retrieval with time-based aggregation.
+
+Recommendations Repository — app/services/recommendations_service.py
+  Manages stock recommendations ranked by GARCH volatility against user risk tier.
+
+
+INTERACTION FLOW
+----------------
+
+  Frontend
+     |
+     v
+  FastAPI Endpoint  (app/api/endpoints/)
+     |  validates request shape via Pydantic schema
+     |  injects DB connection via Depends(get_db)
+     |  injects user_id via Depends(get_current_user_id)  [auth-protected routes]
+     v
+  Service Function  (app/services/)
+     |  executes raw SQL via psycopg2 cursor
+     |  maps RealDictCursor rows to Pydantic response models
+     v
+  PostgreSQL (Heroku Postgres)
+
+
+DATABASE TABLES
+---------------
+
+  Table                        Owner
+  ---------------------------  --------------------------------
+  users                        Auth, Assessment
+  questions                    Assessment
+  questionnaires               Assessment
+  question_responses           Assessment
+  portfolios                   Portfolio
+  portfolio_stock_allocations  Portfolio
+  stock_ohlcv                  Stock
+  stock_predicted_close        Stock
+  garch_volatility_predictions Recommendations
+  kse30_stocks                 Stock, Portfolio, Recommendations

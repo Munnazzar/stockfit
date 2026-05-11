@@ -1,0 +1,115 @@
+Backend Layer (API & Business Logic)
+
+
+This section outlines the backend architecture and request processing flow of the
+StockFit application. The implementation is built around a modular, service-oriented
+design that separates concerns across routing, business logic, and data access —
+enabling clean integration with the frontend SPA and the underlying PostgreSQL database.
+
+1. Architectural Overview
+
+StockFit's backend is built as a RESTful API using FastAPI (Python). The architecture
+is structured into three distinct layers: the API layer (routing and request handling),
+the service layer (business logic), and the data access layer (raw SQL via psycopg2).
+This separation ensures that each component has a single, well-defined responsibility.
+
+The primary objective of the backend is to serve personalized financial data — risk
+assessments, stock recommendations, OHLCV price history, and portfolio allocations —
+in a secure and structured manner to the frontend.
+
+Module Inventory & Primary Functions
+
+Module                  Primary Purpose               Key Responsibility
+----------------------  ----------------------------  ------------------------------
+auth                    Identity Management           Signup, login, JWT issuance
+assessment              Risk Data Acquisition         Questionnaire CRUD, risk scoring
+recommendations         Stock Filtering               Volatility-ranked stock lists
+stock                   Market Data Delivery          Aggregated OHLCV price history
+portfolio               Portfolio Management          Allocation creation and retrieval
+
+
+2. Request Processing & Interaction Model
+
+The backend follows a strict linear processing pipeline for every incoming request.
+By separating validation, authentication, business logic, and persistence into
+discrete steps, the system ensures that no layer is responsible for more than it
+should be.
+
+The Authentication Gate
+
+JWT-Based Security: Every protected route passes through the get_current_user_id
+dependency, which decodes and validates the Bearer token before the endpoint
+logic executes. Unauthenticated requests are rejected at this boundary with a
+401 before any business logic or database query runs.
+
+Identity Management: The auth service handles password hashing via bcrypt and
+issues signed JWTs on successful login or signup. The token embeds the user_id
+as the subject claim, which flows through all subsequent protected requests as
+the user's identity anchor.
+
+The Optimization Workflow
+
+Risk Assessment Pipeline: The questionnaire endpoint collects structured responses
+from the frontend and passes them into the risk profile calculator. This engine
+evaluates three independent dimensions — risk need, risk capacity, and behavioral
+risk tolerance — and resolves them into a final portfolio tier (High, Moderate,
+or Low). The result is persisted against the user and questionnaire record.
+
+Stock Recommendations: Once a risk tier is known, the recommendations endpoint
+queries the GARCH volatility predictions table. It averages the latest 180 days
+of predicted volatility per symbol, ranks all symbols by that average, and returns
+the tier-appropriate slice. High risk maps to the most volatile stocks, Low risk
+to the least volatile.
+
+Portfolio Allocation: The portfolio endpoint receives a list of stock symbols and
+a questionnaire ID from the frontend. It validates that the questionnaire belongs
+to the requesting user, generates a percentage allocation across all symbols, and
+persists the result as a linked portfolio record. This creates a permanent audit
+trail connecting each portfolio back to the risk assessment that produced it.
+
+Market Data Delivery: The stock OHLCV endpoint serves price history for any given
+symbol across six time horizons. Shorter horizons return raw daily candles; longer
+horizons apply N-day bucketing aggregation (2d, 3d, 5d, 7d) so the frontend always
+receives a chart-ready, proportional number of data points regardless of the
+selected range.
+
+
+3. Endpoint Interaction Logic
+
+Endpoints are not isolated handlers; they are nodes in a dependency graph. FastAPI's
+Depends() system wires the database connection and authenticated user identity into
+every handler automatically. This means business logic functions receive clean,
+validated inputs and never deal with raw HTTP concerns.
+
+Flow: Request -> Pydantic Validation -> Auth Check -> Service Function -> SQL -> Response Model
+
+Every response is serialized through a Pydantic response model, ensuring the API
+contract is enforced at the output boundary. The frontend always receives a
+predictable, typed JSON structure regardless of what the database returns.
+
+
+4. API Endpoint Summary
+
+Method  Path                                    Auth    Purpose
+------  --------------------------------------  ------  ---------------------------------
+POST    /api/auth/signup                        No      Register a new user
+POST    /api/auth/login                         No      Authenticate and receive JWT
+GET     /api/assessment/questions               No      Fetch all questionnaire questions
+POST    /api/assessment/risk                    Yes     Submit responses, get risk tier
+GET     /api/assessment/questionnaires          Yes     List user's past questionnaires
+GET     /api/assessment/questionnaires/{id}     Yes     Get full detail for a questionnaire
+POST    /api/recommendations/stocks             No      Get stocks by risk tier
+GET     /api/stocks/{symbol}/ohlcv              No      Get OHLCV data for a symbol
+POST    /api/portfolio                          Yes     Create a portfolio allocation
+GET     /api/portfolio                          Yes     List user's past portfolios
+
+
+5. Summary of Backend Strategy
+
+The StockFit backend succeeds by treating each request as a step in a larger,
+stateful user journey. From the initial JWT issuance at login, through the risk
+assessment pipeline, to the final portfolio allocation linked back to a specific
+questionnaire — every layer is designed to be traceable, secure, and independently
+testable. The service-oriented structure means the allocation logic (currently random,
+to be replaced with a genetic algorithm) can be swapped in one function without
+touching the API contract or the database schema.
