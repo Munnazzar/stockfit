@@ -13,6 +13,7 @@ from app.schemas.user import (
     TokenResponse,
     UpdateUserRequest,
     UserResponse,
+    VerifyEmailRequest,
     VerifyResetCodeRequest,
 )
 from app.services import auth_service
@@ -20,12 +21,20 @@ from app.services import auth_service
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-@router.post("/signup", response_model=TokenResponse, status_code=201)
+@router.post("/signup", response_model=MessageResponse, status_code=201)
 def signup(
     body: SignupRequest,
     db: psycopg2.extensions.connection = Depends(get_db),
-) -> TokenResponse:
+) -> MessageResponse:
     return auth_service.signup(db, body)
+
+
+@router.post("/verify-email", response_model=TokenResponse)
+def verify_email(
+    body: VerifyEmailRequest,
+    db: psycopg2.extensions.connection = Depends(get_db),
+) -> TokenResponse:
+    return auth_service.verify_email(db, body)
 
 
 @router.post("/login", response_model=TokenResponse)

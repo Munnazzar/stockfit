@@ -81,6 +81,17 @@ CREATE TABLE portfolio_stock_allocations (
     UNIQUE (fk_portfolio_id, symbol)
 );
 
+CREATE TABLE pending_users (
+    pending_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    code VARCHAR(6) NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE password_reset_tokens (
     token_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     fk_user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
