@@ -1,5 +1,6 @@
 import psycopg2.extensions
 from fastapi import HTTPException, status
+import pandas as pd
 
 from app.schemas.recommendations import (
     StockRecommendationSchema,
@@ -13,7 +14,16 @@ _TIER_RANGES = {
     "low": (20, 30),
 }
 
-
+def compute_returns(prices: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compute daily simple returns from closing prices.
+        r_t = (close_t - close_{t-1}) / close_{t-1}
+    Returns:
+        DataFrame shape (T-1, N).
+    """
+    returns = prices.pct_change().dropna()
+    print(f"\n  Returns matrix : {returns.shape[0]} days × {returns.shape[1]} assets")
+    return returns
 def get_stock_recommendations(
     db: psycopg2.extensions.connection,
     data: StockRecommendationsRequest,
