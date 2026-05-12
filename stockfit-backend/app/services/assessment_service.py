@@ -206,6 +206,9 @@ def submit_risk_assessment(
 
     opts = {r.question_id_cfa: r.selected_option for r in data.responses}
 
+    opts["investment_time_horizon_years"].value= float(opts["investment_time_horizon_years"].value)/12
+    opts["annual_net_cash_flow"].value= float(opts["annual_net_cash_flow"].value)*12
+    
     def _num(key: str) -> float:
         return float(opts[key].value)
 
@@ -221,9 +224,9 @@ def submit_risk_assessment(
     profile = evaluate_user_risk_profile(
         target_future_value=_num("target_future_value"),
         current_portfolio_value=_num("current_portfolio_value"),
-        investment_time_horizon_years=int(_num("investment_time_horizon_years")),
+        investment_time_horizon_years=float(_num("investment_time_horizon_years")),
         annual_net_cash_flow=_num("annual_net_cash_flow"),
-        tolerance_time_horizon_years=int(_num("investment_time_horizon_years")),
+        tolerance_time_horizon_years=float(_num("investment_time_horizon_years")),
         expects_high_withdrawal_rate=_bool("expects_high_withdrawal_rate"),
         has_stable_external_income=_bool("has_stable_external_income"),
         willingness_to_take_risk=_score("willingness_to_take_risk"),

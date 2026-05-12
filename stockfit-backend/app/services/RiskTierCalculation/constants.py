@@ -8,15 +8,15 @@ RED = "RED"
 
 #Assumed by us
 REQURED_RETURN_THRESHOLD = {
-    LOW: 0.05,
-    MODERATE: 0.10,
-    HIGH: 0.15
+    LOW: 0.12,
+    MODERATE: 0.20,
+    HIGH: 0.30
 }
 
 #From CFA INSTITUTE (We might adjust to our timeline)
 TIME_HORIZON_THRESHOLD = {
-    LOW: 5,
-    HIGH: 10
+    LOW: 0.5,
+    HIGH: 1
 }
 
 #From CFA INSTITUTE
