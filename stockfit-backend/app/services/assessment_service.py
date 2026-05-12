@@ -207,7 +207,6 @@ def submit_risk_assessment(
     opts = {r.question_id_cfa: r.selected_option for r in data.responses}
 
     opts["investment_time_horizon_years"].value= float(opts["investment_time_horizon_years"].value)/12
-    opts["annual_net_cash_flow"].value= float(opts["annual_net_cash_flow"].value)*12
     
     def _num(key: str) -> float:
         return float(opts[key].value)

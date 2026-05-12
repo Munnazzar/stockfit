@@ -7,11 +7,12 @@ YELLOW = "YELLOW"
 RED = "RED"
 
 #Assumed by us
-REQURED_RETURN_THRESHOLD = {
-    LOW: 0.12,
-    MODERATE: 0.20,
-    HIGH: 0.30
+REQUIRED_RETURN_THRESHOLD = {
+    LOW:      (1 + 0.12) ** (1/12) - 1,  # ≈ 0.00949 (~0.95%/month)
+    MODERATE: (1 + 0.20) ** (1/12) - 1,  # ≈ 0.01531 (~1.53%/month)
+    HIGH:     (1 + 0.30) ** (1/12) - 1,  # ≈ 0.02233 (~2.23%/month)
 }
+
 
 #From CFA INSTITUTE (We might adjust to our timeline)
 TIME_HORIZON_THRESHOLD = {
