@@ -81,6 +81,15 @@ CREATE TABLE portfolio_stock_allocations (
     UNIQUE (fk_portfolio_id, symbol)
 );
 
+CREATE TABLE password_reset_tokens (
+    token_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    fk_user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    code VARCHAR(6) NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS garch_volatility_predictions (
     symbol VARCHAR(50),
     date DATE,
