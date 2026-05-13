@@ -33,162 +33,162 @@ RISK_DECISION_TABLE = {
     (HIGH, HIGH, HIGH): {
         "signal": GREEN,
         "portfolio": HIGH,
-        "message": "All factors align. Proceed with high volatility portfolio."
+        "message": "All factors align. You may proceed with a high volatility portfolio."
     },
 
     (MODERATE, HIGH, HIGH): {
         "signal": GREEN,
         "portfolio": HIGH,
-        "message": "Moderate need can be ignored. Proceed with high volatility portfolio."
+        "message": "Your moderate risk need can be safely ignored. You may proceed with a high volatility portfolio."
     },
 
     (LOW, HIGH, HIGH): {
         "signal": GREEN,
         "portfolio": HIGH,
-        "message": "Low need can be ignored. Proceed with high volatility portfolio."
+        "message": "Your low risk need can be safely ignored. You may proceed with a high volatility portfolio."
     },
 
     (MODERATE, MODERATE, MODERATE): {
         "signal": GREEN,
         "portfolio": MODERATE,
-        "message": "All factors align. Proceed with moderate volatility portfolio."
+        "message": "All factors align. You may proceed with a moderate volatility portfolio."
     },
 
     (MODERATE, HIGH, MODERATE): {
         "signal": GREEN,
         "portfolio": MODERATE,
-        "message": "High ability can be ignored. Proceed with moderate volatility portfolio."
+        "message": "Your high risk-taking ability can be safely ignored. You may proceed with a moderate volatility portfolio."
     },
 
     (LOW, MODERATE, MODERATE): {
         "signal": GREEN,
         "portfolio": MODERATE,
-        "message": "Low need can be ignored. Proceed with moderate volatility portfolio."
+        "message": "Your low risk need can be safely ignored. You may proceed with a moderate volatility portfolio."
     },
-   #dasdsa
+
     (LOW, HIGH, MODERATE): {
         "signal": GREEN,
         "portfolio": MODERATE,
-        "message": "Proceed: Moderate volatility portfolio. Both low need and high ability can be safely ignored in favor of moderate tolerance"
+        "message": "Both your low risk need and high risk-taking ability can be safely ignored in favor of your moderate loss tolerance. You may proceed with a moderate volatility portfolio."
     },
 
     (LOW, LOW, LOW): {
         "signal": GREEN,
         "portfolio": LOW,
-        "message": "All factors align. Proceed with low volatility portfolio."
+        "message": "All factors align. You may proceed with a low volatility portfolio."
     },
 
     (LOW, HIGH, LOW): {
         "signal": GREEN,
         "portfolio": LOW,
-        "message": "Ability ignored. Proceed with low volatility portfolio."
+        "message": "Your high risk-taking ability can be safely ignored. You may proceed with a low volatility portfolio."
     },
 
     (LOW, MODERATE, LOW): {
         "signal": GREEN,
         "portfolio": LOW,
-        "message": "Moderate ability ignored. Proceed with low volatility portfolio."
+        "message": "Your moderate risk-taking ability can be safely ignored. You may proceed with a low volatility portfolio."
     },
 
     (MODERATE, MODERATE, HIGH): {
         "signal": YELLOW,
         "portfolio": MODERATE,
-        "message": "Behavior exceeds ability. Investor education required."
+        "message": "Caution: Your loss tolerance exceeds your risk-taking ability. You may expect or desire more volatility than is prudent. Some education may be required before proceeding with a moderate volatility portfolio."
     },
 
     (LOW, MODERATE, HIGH): {
         "signal": YELLOW,
         "portfolio": MODERATE,
-        "message": "Behavior exceeds ability. Low need ignored."
+        "message": "Caution: Your loss tolerance exceeds your risk-taking ability. You may expect or desire more volatility than is prudent. Your low risk need can be safely ignored. Some education may be required before proceeding with a moderate volatility portfolio."
     },
 
     (LOW, LOW, HIGH): {
         "signal": YELLOW,
         "portfolio": LOW,
-        "message": "Behavior exceeds ability. Caution advised."
+        "message": "Caution: Your loss tolerance exceeds your risk-taking ability. You may expect or desire more volatility than is prudent. Some education may be required before proceeding with a low volatility portfolio."
     },
 
     (LOW, LOW, MODERATE): {
         "signal": YELLOW,
         "portfolio": LOW,
-        "message": "Behavior exceeds ability. Caution advised."
+        "message": "Caution: Your loss tolerance exceeds your risk-taking ability. You may expect or desire more volatility than is prudent. Some education may be required before proceeding with a low volatility portfolio."
     },
 
     (HIGH, HIGH, MODERATE): {
         "signal": YELLOW,
         "portfolio": None,
-        "message": "Investor unwilling to take required risk. Discussion needed."
+        "message": "Caution: Your loss tolerance is lower than your risk need and risk-taking ability. You may need guidance to feel comfortable increasing your volatility exposure to meet your goals. Do not assume you are willing to increase volatility. Reevaluating your goal to align with your behavioral loss tolerance may be necessary."
     },
-#dasdsads
+
     (HIGH, HIGH, LOW): {
         "signal": YELLOW,
         "portfolio": None,
-        "message": "Investor tolerance too low. May need goal adjustment."
+        "message": "Caution: Your loss tolerance is lower than your risk need and risk-taking ability. You may need guidance to feel comfortable increasing your volatility exposure to meet your goals. Do not assume you are willing to increase volatility. Reevaluating your goal to align with your behavioral loss tolerance may be necessary."
     },
-    
+
     (MODERATE, HIGH, LOW): {
         "signal": YELLOW,
         "portfolio": None,
-        "message": "Investor tolerance too low. May need goal adjustment."
+        "message": "Caution: Your loss tolerance is lower than your risk need and risk-taking ability. You may need guidance to feel comfortable increasing your volatility exposure to meet your goals. Do not assume you are willing to increase volatility. Reevaluating your goal to align with your behavioral loss tolerance may be necessary."
     },
-    
+
     (MODERATE, MODERATE, LOW): {
         "signal": YELLOW,
         "portfolio": None,
-        "message": "Investor tolerance too low. May need goal adjustment."
+        "message": "Caution: Your loss tolerance is lower than your risk need and risk-taking ability. You may need guidance to feel comfortable increasing your volatility exposure to meet your goals. Do not assume you are willing to increase volatility. Reevaluating your goal to align with your behavioral loss tolerance may be necessary."
     },
 
     (HIGH, MODERATE, HIGH): {
         "signal": RED,
         "portfolio": None,
-        "message": "Risk need exceeds capacity. Reevaluate goals."
+        "message": "Your risk need exceeds your risk-taking ability. Even though your need and loss tolerance point to a high volatility portfolio, your moderate ability means you can withstand only a moderate volatility strategy. Please reestablish your expectations and reevaluate your goals."
     },
 
     (HIGH, MODERATE, MODERATE): {
         "signal": RED,
         "portfolio": None,
-        "message": "Risk need exceeds capacity. Reevaluate goals."
+        "message": "Your risk need exceeds your risk-taking ability. You have only a moderate ability and can withstand only a moderate volatility strategy. Please reestablish your expectations and reevaluate your goals."
     },
 
     (HIGH, MODERATE, LOW): {
         "signal": RED,
         "portfolio": None,
-        "message": "Risk need exceeds capacity. Behavioral mismatch."
+        "message": "Your risk need exceeds your risk-taking ability. You have only a moderate ability and can withstand only a moderate volatility strategy. You may need guidance to feel comfortable increasing your volatility exposure; reevaluating your goal to align with your behavioral loss tolerance may be necessary instead."
     },
-#dasdsad
+
     (HIGH, LOW, HIGH): {
         "signal": RED,
         "portfolio": None,
-        "message": "Severe mismatch. Low capacity cannot support goal."
+        "message": "Your risk need exceeds your risk-taking ability. You have a low ability and can withstand only a low volatility strategy. You may need guidance to feel comfortable increasing your volatility exposure; reevaluating your goal to align with your behavioral loss tolerance may be necessary instead."
     },
 
     (HIGH, LOW, MODERATE): {
         "signal": RED,
         "portfolio": None,
-        "message": "Severe mismatch. Reevaluate goals."
+        "message": "Your risk need exceeds your risk-taking ability. You have a low ability and can withstand only a low volatility strategy. You may need guidance to feel comfortable increasing your volatility exposure; reevaluating your goal to align with your behavioral loss tolerance may be necessary instead."
     },
 
     (HIGH, LOW, LOW): {
         "signal": RED,
         "portfolio": None,
-        "message": "Completely infeasible risk profile."
+        "message": "Your risk need exceeds your risk-taking ability. You have a low ability and can withstand only a low volatility strategy. Please reestablish your expectations and reevaluate your goals."
     },
 
     (MODERATE, LOW, HIGH): {
         "signal": RED,
         "portfolio": None,
-        "message": "Need exceeds capacity + behavior mismatch."
+        "message": "Your risk need exceeds your risk-taking ability, and your loss tolerance also exceeds your risk-taking ability. You may expect or desire more volatility than is prudent. You have a low ability and can withstand only a low volatility strategy. Additional education is warranted."
     },
 
     (MODERATE, LOW, MODERATE): {
         "signal": RED,
         "portfolio": None,
-        "message": "Need exceeds capacity."
+        "message": "Your risk need exceeds your risk-taking ability, and your loss tolerance also exceeds your risk-taking ability. You may expect or desire more volatility than is prudent. You have a low ability and can withstand only a low volatility strategy. Additional education is warranted."
     },
 
     (MODERATE, LOW, LOW): {
         "signal": RED,
         "portfolio": None,
-        "message": "Infeasible given low capacity."
+        "message": "Your risk need exceeds your risk-taking ability. You have a low ability and can withstand only a low volatility strategy. Please reestablish your expectations and reevaluate your goals."
     },
 }
