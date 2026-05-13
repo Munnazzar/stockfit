@@ -23,7 +23,7 @@ SEVERE_PENALTY   = 9999    # applied when maximum-investment-per-asset is violat
 
 # Portfolio constraints
 GENE_UPPER_BOUND = 0.7
-MAX_WEIGHT = 0.50
+MAX_WEIGHT = 0.40
 MAX_ASSETS = 5
 WEIGHT_DECIMALS = 4
 
@@ -60,6 +60,6 @@ HOF_SIZE = 10          # number of best individuals to track. (The paper does no
 N_GENERATIONS =   30   # configurable; not fixed in this section of the paper
 
 # Hyperparameters for GA Iteration
-CXPB      = 0.7        # probability that a pair of parents undergoes crossover
-MUTPB  = 0.2           # probability that an individual undergoes mutation
-INDPB  = 0.1           # per-gene probability of being mutated (paper names this "indpb")
+CXPB      = 0.9        # probability that a pair of parents undergoes crossover
+MUTPB  = 0.9           # probability that an individual undergoes mutation
+INDPB  = 0.15           # per-gene probability of being mutated (paper names this "indpb")

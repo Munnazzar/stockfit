@@ -337,7 +337,7 @@ def run_ga_forward(
     asset_names: list[str],
     returns: np.ndarray,
     master_outputs: np.ndarray,
-    master_alpha: float = 0.3,
+    master_alpha: float = 0.7,
     n_generations: int = N_GENERATIONS,
     n_parents: int = N_PARENTS,
     tournament_size: int = TOURNAMENT_SIZE,
